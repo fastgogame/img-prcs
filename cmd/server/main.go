@@ -18,8 +18,8 @@ func main() {
 
 	router.LoadHTMLGlob("internal/templates/*")
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.html", nil)
 	})
 
 	router.POST("/process-image", handlers.ProcessImage)

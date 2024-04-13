@@ -9,39 +9,39 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ProcessImage(c *gin.Context) {
-	imageFile, err := c.FormFile("imageFile")
+func ProcessImage(ctx *gin.Context) {
+	imageFile, err := ctx.FormFile("imageFile")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	src, err := imageFile.Open()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer src.Close()
 
 	img, _, err := image.Decode(src)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	tempFile, err := os.CreateTemp("", "processed_*.jpg")
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer tempFile.Close()
 	defer os.Remove(tempFile.Name())
 
-	err = jpeg.Encode(tempFile, img, &jpeg.Options{Quality: 80})
+	err = jpeg.Encode(tempFile, img, &jpeg.Options{Quality: 5})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.File(tempFile.Name())
+	ctx.File(tempFile.Name())
 }
